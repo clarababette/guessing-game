@@ -73,6 +73,7 @@ guessBtn.addEventListener('click', () => {
 });
 resetBtn.addEventListener('click', () => {
   localStorage.removeItem('scores');
+  scoresElem.innerHTML = '';
 });
 
 guess.addEventListener('keyup', (event) => {
