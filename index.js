@@ -5,71 +5,141 @@ const guessBtn = document.querySelector('.guess_btn');
 const resetBtn = document.querySelector('.reset_btn');
 const newGameMsg = document.querySelector('.new_game_msg');
 let scores = [];
-
+const secretNumberElem = document.querySelector('.secret_number');
 const scoresElem = document.querySelector('.scores');
-let gameScore; 
+const resultsElem = document.querySelector('#result');
+const loading = document.querySelector('.loading');
+const currentScore = document.querySelector('.current_score h3');
+const highScore = document.querySelector('.high_score h3');
+let player = '';
 
-
+let gameScore;
+let numTries;
+let prevGuess;
 
 function scoreboard() {
-  scoresElem.innerHTML = '<th>Game played on...</th> <th>Score</th>';
+  scores.sort((a, b) => {
+    a = parseInt(a.score);
+    b = parseInt(b.score);
+    return b - a;
+  });
+  scoresElem.innerHTML = '';
   for (const myScore of scores) {
     const row = document.createElement('tr');
-    const date = document.createElement('td');
+    const num = document.createElement('td');
+    const name = document.createElement('td');
     const score = document.createElement('td');
-  
-    date.innerHTML = myScore.date;
+    const date = document.createElement('td');
+
+    num.innerHTML = `#${scores.indexOf(myScore) + 1}`;
+    name.innerHTML = myScore.playerName;
     score.innerHTML = myScore.score;
-    row.appendChild(date);
+    date.innerHTML = myScore.date;
+    row.appendChild(num);
+    row.appendChild(name);
     row.appendChild(score);
-    scoresElem.appendChild(row)
+    row.appendChild(date);
+    scoresElem.appendChild(row);
   }
 }
 
 function newGame() {
+  secretNumberElem.innerHTML = '';
+  currentScore.innerHTML = '000';
+  resultsElem.removeAttribute('class');
+  resultsElem.classList.add('material-icons-round');
+  resultsElem.classList.add('rotate');
+  resultsElem.classList.add('thinking');
   scoreboard();
-  gameScore = 100;
+  gameScore = 1000;
+  numTries = 0;
+  prevGuess = 0;
   secretNumber = Math.ceil(Math.random() * 100);
+  loading.innerHTML = 'Choosing a new number...';
   resultMsg.innerHTML = '';
-  guess.value = undefined;
-  newGameMsg.innerHTML = 'New game started!';
+  guess.value = '';
   setTimeout(() => {
-    newGameMsg.innerHTML = '';
-  }, 3000);
+    resultsElem.classList.remove('rotate');
+    resultsElem.classList.remove('thinking');
+    loading.innerHTML = 'The secret number is...';
+  }, 2000);
 }
 
 if (localStorage.getItem('scores')) {
   scores = JSON.parse(localStorage.getItem('scores'));
-  scoreboard()
+  scoreboard();
+}
+if (localStorage.getItem('currentPlayer')) {
+  player = localStorage.getItem('currentPlayer');
 }
 newGame();
 
-function checkGuess(guessedNumber) {
-  const tooLow = `${guessedNumber} is too low.`;
-  const tooHigh = `${guessedNumber} is too high.`;
-  const correct = `Correct, the secret number is ${secretNumber}`;
-  let result =
-    guessedNumber == secretNumber
-      ? correct
-      : guessedNumber > secretNumber
-      ? tooHigh
-      : tooLow;
-  resultMsg.innerHTML = result;
-  const now = new Intl.DateTimeFormat('en-GB', { dateStyle: 'short', timeStyle: 'short' }).format(new Date())
-  if (result == correct) {
-    setTimeout(newGame, 3000);
-    scores.unshift({
-      date: now,
-      score: gameScore
-    })
-    localStorage.setItem('scores', JSON.stringify(scores))
-  } else {
-    gameScore--;
+function findHighScore() {
+  if (scores.find(game => game.playerName == player)) {
+    let playerScores = scores.filter(score => score.playerName == player);
+    playerScores.sort((a, b) => {
+      a = parseInt(a.score);
+      b = parseInt(b.score);
+      return b - a;
+    });
+    highScore.innerHTML = playerScores[0].score;
   }
 }
 
+
+findHighScore()
+
+function checkGuess(guessedNumber) {
+  resultsElem.removeAttribute('class');
+  resultsElem.classList.add('material-icons-round');
+  resultsElem.classList.add('rotate');
+  const tooLow = `higher than ${guessedNumber}.`;
+  const tooHigh = `lower than ${guessedNumber}.`;
+  const correct = `Congrats!`;
+  setTimeout(() => {
+    resultsElem.classList.remove('rotate');
+    const now = new Intl.DateTimeFormat('en-GB', {
+      dateStyle: 'short',
+      timeStyle: 'short',
+    }).format(new Date());
+    if (guessedNumber == secretNumber) {
+      resultMsg.innerHTML = correct;
+      resultsElem.classList.add('correct');
+      secretNumberElem.innerHTML = secretNumber;
+      setTimeout(newGame, 3000);
+      scores.unshift({
+        playerName: player,
+        date: now,
+        score: gameScore,
+      });
+
+      localStorage.setItem('scores', JSON.stringify(scores));
+    } else if (guessedNumber > secretNumber) {
+      resultMsg.innerHTML = tooHigh;
+      resultsElem.classList.add('lower');
+    } else {
+      resultMsg.innerHTML = tooLow;
+      resultsElem.classList.add('higher');
+    }
+    if (guessedNumber != secretNumber) {
+      numTries++;
+      let penalty = Math.abs(guessedNumber - secretNumber) * numTries;
+      penalty = penalty / Math.abs(guessedNumber - prevGuess);
+      penalty = Math.round(penalty * 10);
+      gameScore = gameScore - penalty;
+      prevGuess = guessedNumber;
+      currentScore.innerHTML = gameScore;
+    }
+    findHighScore()
+  }, 750);
+}
+
 guessBtn.addEventListener('click', () => {
-  checkGuess(guess.value);
+  if (guess.value > 0 && guess.value < 101) {
+    checkGuess(guess.value);
+  } else {
+    guess.value = '';
+  }
 });
 resetBtn.addEventListener('click', () => {
   localStorage.removeItem('scores');
@@ -80,4 +150,4 @@ guess.addEventListener('keyup', (event) => {
   if (event.keyCode === 13) {
     guessBtn.click();
   }
-})
+});

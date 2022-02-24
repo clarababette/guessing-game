@@ -7,25 +7,26 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Source+Code+Pro:wght@200;300;400;500;600;700;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
       rel="stylesheet"
     />
     <title>Guessing Game</title>
   </head>
   <body>
-    <div class="container">
+    <span class="title">
       <h1>Guessing Game</h1>
-      <div>Try to guess the secret number between 1 and 100.</div>
-      <div class="new_game_msg"></div>
-      <input type="number" class="guess" />
-      <input type="button" class="guess_btn" value="Guess!" />
-      <div class="result_msg"></div>
-      <table class="scores"></table>
-      <input type="button" class="reset_btn" value="Reset scores" />
-    </div>
+      <h2>Try to guess the secret number between 1 and 100.</h2>
+    </span>
+    <span>
+      <div>Player name:</div>
+      <input type="text" class="player_name" />
+      <input type="button" value="start game" class="startBtn" />
+    </span>
   </body>
-  <script src="index.js"></script>
+  <script src="start.js"></script>
 </html>
