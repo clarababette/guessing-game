@@ -18,8 +18,6 @@ body {
   height: fit-content;
   display: grid;
   margin: 0px auto;
-  /* grid-template-columns: 2fr 1fr 1fr; */
-  /* grid-template-rows: repeat(3, auto); */
   row-gap: 10px;
   column-gap: 10px;
   grid-template-areas:
@@ -187,4 +185,14 @@ td {
 
 tr:nth-child(even) td {
   background-color: rgba(116, 122, 188, 0.75);
+}
+
+@media only screen and (max-width: 768px) {
+  .container {
+    grid-template-areas:
+      'title title'
+      'game game'
+      'current_score high_score'
+      'leaderboard leaderboard';
+  }
 }
