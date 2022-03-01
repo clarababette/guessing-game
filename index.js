@@ -124,7 +124,7 @@ function checkGuess(guessedNumber) {
     if (guessedNumber != secretNumber) {
       numTries++;
       let penalty = Math.abs(guessedNumber - secretNumber) * numTries;
-      penalty = penalty / Math.abs(guessedNumber - prevGuess);
+      penalty = guessedNumber != prevGuess ? penalty / Math.abs(guessedNumber - prevGuess) : penalty / Math.abs(guessedNumber - secretNumber);
       penalty = Math.round(penalty * 10);
       gameScore = gameScore - penalty;
       prevGuess = guessedNumber;
