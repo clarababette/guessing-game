@@ -142,6 +142,11 @@ input[type='text'] {
 .lower.material-icons-round:before {
   content: 'arrow_downward';
 }
+.invalid-guess.material-icons-round:before {
+  content: 'warning_amber';
+  color: yellowgreen;
+  opacity: 100%;
+}
 
 .rotate {
   animation: rotation 1s infinite linear;
