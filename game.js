@@ -33,15 +33,16 @@ export class GameStats {
 
 export class Game {
   constructor() {
-    this.newGame;
+    this.newGame();
   }
   newGame() {
     this._score = 1000;
+    
     this._guesses = [];
     this._secretNumber = Math.ceil(Math.random() * 100);
   }
-
   play(guess) {
+   
     return new Promise((resolve, reject) => {
       if (guess > 100 || guess < 1) {
         reject({
@@ -50,7 +51,7 @@ export class Game {
           score: this._score,
         });
       } else {
-        this._guesses = [guess, ...this._guesses];
+        this._guesses = Array.isArray(this._guesses) ? [guess, ...this._guesses] : [guess];
         if (guess == this._secretNumber) {
           resolve(this._score);
         } else {
